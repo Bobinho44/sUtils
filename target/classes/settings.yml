@@ -1,0 +1,5 @@
+joinMessage:
+  - "&e--------------------------."
+  - "&a%player% joined the server."
+  - "&e--------------------------."
+enableNetherite: true
