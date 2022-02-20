@@ -24,7 +24,7 @@ public class RulesCommand extends BaseCommand {
         if (commandSender instanceof Player) {
             Player sender = (Player) commandSender;
 
-            sender.sendMessage(ChatColor.GOLD + "Be sure to read over our rules at: &eluxepvp.net/rules");
+            sender.sendMessage(ChatColor.GOLD + "Be sure to read over our rules at: " + ChatColor.YELLOW + "luxepvp.net/rules");
         }
     }
 

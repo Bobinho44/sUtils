@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class sUtilsCombatTagManager {
 
@@ -25,6 +25,7 @@ public class sUtilsCombatTagManager {
             //Removes players who have not been in combat for 60 seconds
             getsUtilsPlayersCombatTagList().stream()
                     .filter(combatTag -> combatTag.getDuration().elapsed().toSeconds() >= 60).map(sUtilsCombatTag::getPlayer)
+                    .collect(Collectors.toList())
                     .forEach(sUtilsCombatTagManager::deletesUtilsPlayerCombatTag);
 
             //Sends players combat tag remaining time in the action bar
@@ -84,7 +85,6 @@ public class sUtilsCombatTagManager {
         //Creates the player combat tag
         if (!isItsUtilsPlayerCombatTag(player)) {
             getsUtilsPlayersCombatTagList().add(new sUtilsCombatTag(player, lastDamager));
-            sUtilsSafezoneManager.showsUtilsSafezone(player);
             player.sendMessage(ChatColor.RED + "You are now in combat!");
         }
 
@@ -93,6 +93,11 @@ public class sUtilsCombatTagManager {
             sUtilsCombatTag combatTag = getsUtilsPlayerCombatTag(player).get();
             combatTag.setLastDamager(lastDamager);
             combatTag.resetDuration();
+        }
+
+        //Show safezone border
+        if (sUtilsSafezoneManager.isItsUtilsSafezone(player.getWorld().getEnvironment())) {
+            sUtilsSafezoneManager.showsUtilsSafezone(player);
         }
     }
 
@@ -107,7 +112,6 @@ public class sUtilsCombatTagManager {
         //Delete the player combat tag
         getsUtilsPlayersCombatTagList().remove(getsUtilsPlayerCombatTag(player).get());
         sUtilsSafezoneManager.hidesUtilsSafezone(player);
-        player.setCooldown(Material.ENDER_PEARL, 0);
         player.sendMessage(ChatColor.GREEN + "You are no longer in combat.");
     }
 

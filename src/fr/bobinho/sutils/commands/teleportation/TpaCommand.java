@@ -24,12 +24,18 @@ public class TpaCommand extends BaseCommand {
             Player sender = (Player) commandSender;
             Player receiver = commandReceiver.getPlayer();
 
-            //Sends teleportation request
-            sUtilsTeleportationRequest.createsUtilsTeleportationRequest(sender, receiver);
+            //Checks if sender request to himself
+            if (sender.equals(receiver)) {
+                sender.sendMessage(ChatColor.RED + "You cannot send a teleportation request to yourself!");
+                return;
+            }
 
             //Sends message
             sender.sendMessage(ChatColor.GREEN + "You have sent a teleportation request to " + receiver.getName() + ".");
             receiver.sendMessage(ChatColor.GREEN + "You have received a teleportation request from " + sender.getName() + ".");
+
+            //Sends teleportation request
+            sUtilsTeleportationRequest.createsUtilsTeleportationRequest(sender, receiver);
         }
     }
 

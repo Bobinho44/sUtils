@@ -26,6 +26,7 @@ public class ConnectionListener implements Listener {
         List<String> joinMessage = sUtilsCore.getMainSettings().getConfiguration().getStringList("joinMessage");
 
         //Sends the join message to all player
+        e.joinMessage(null);
         Bukkit.getOnlinePlayers().forEach(player -> joinMessage.forEach(message -> player.sendMessage(reformatJoinMessage(e.getPlayer(), message))));
     }
 

@@ -17,7 +17,7 @@ public class sUtilsSafezoneManager {
 
     private final static List<sUtilsSafezone> sUtilsSafezones = new ArrayList<>();
 
-    private static List<sUtilsSafezone> getsUtilsSafezones() {
+    public static List<sUtilsSafezone> getsUtilsSafezones() {
         return sUtilsSafezones;
     }
 
@@ -33,11 +33,28 @@ public class sUtilsSafezoneManager {
         return getsUtilsSafezone(environment).isPresent();
     }
 
+    public static void createsUtilsSafezone(@Nonnull Location center, int radius) {
+        Validate.notNull(center, "center is null");
+
+        createsUtilsSafezone(center, radius, center.getWorld().getEnvironment());
+    }
+
     public static void createsUtilsSafezone(@Nonnull Location center, int radius, @Nonnull World.Environment environment) {
         Validate.notNull(center, "center is null");
         Validate.notNull(environment, "environment is null");
 
+        if (isItsUtilsSafezone(environment)) {
+            deleteUtilsSafezone(environment);
+        }
+
         getsUtilsSafezones().add(new sUtilsSafezone(center, radius, environment));
+    }
+
+    public static void deleteUtilsSafezone(@Nonnull World.Environment environment) {
+        Validate.notNull(environment, "environment is null");
+        Validate.isTrue(isItsUtilsSafezone(environment), "safezone is not set in this environment");
+
+        getsUtilsSafezones().remove(getsUtilsSafezone(environment).get());
     }
 
     public static boolean isItInsUtilsSafezone(@Nonnull Location location) {
@@ -52,7 +69,7 @@ public class sUtilsSafezoneManager {
         sUtilsSafezone safezone = getsUtilsSafezone(location.getWorld().getEnvironment()).get();
 
         //Checks if the distance between location and safezone center <= safezone radius
-        return Math.sqrt(Math.pow(location.getX() - safezone.getCenter().getX(), 2) + Math.pow(location.getZ() - safezone.getCenter().getZ(), 2)) <= safezone.getRadius();
+        return Math.abs(location.getX() - safezone.getCenter().getX()) <= safezone.getRadius() && Math.abs(location.getZ() - safezone.getCenter().getZ()) <= safezone.getRadius();
     }
 
     public static void showsUtilsSafezone(@Nonnull Player player) {
@@ -63,7 +80,7 @@ public class sUtilsSafezoneManager {
         sUtilsSafezone safezone = getsUtilsSafezone(player.getWorld().getEnvironment()).get();
 
         //Show the safezone
-        sUtilsCore.getWorldBorderApi().setBorder(player, safezone.getRadius(), safezone.getCenter());
+        sUtilsCore.getWorldBorderApi().setBorder(player, safezone.getRadius() + 3, safezone.getCenter());
     }
 
     public static void hidesUtilsSafezone(@Nonnull Player player) {
@@ -89,12 +106,15 @@ public class sUtilsSafezoneManager {
 
     public static void savesUtilsSafezone() {
         YamlConfiguration configuration = sUtilsCore.getSafezonesSettings().getConfiguration();
+        sUtilsCore.getSafezonesSettings().clear();
 
         //Saves safezones
         for (sUtilsSafezone safezone : getsUtilsSafezones()) {
-            configuration.set(safezone.getEnvironment() + ".center", safezone.getCenter());
+            configuration.set(safezone.getEnvironment() + ".center", sUtilsLocationUtil.getAsString(safezone.getCenter()));
             configuration.set(safezone.getEnvironment() + ".radius", safezone.getRadius());
         }
+
+        sUtilsCore.getSafezonesSettings().save();
     }
 
 }

@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -64,7 +63,12 @@ public class DisablingListener implements Listener {
      */
     @EventHandler
     public void onPlayerUseShield2(PlayerInteractEvent e) {
-        e.setCancelled(e.getItem() != null && e.getItem().getType() == Material.SHIELD && (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK));
+        if (e.getItem() == null || e.getItem().getType() != Material.SHIELD) {
+            return;
+        }
+
+        //Adds cooldown
+        e.getPlayer().setCooldown(Material.SHIELD, 99999999);
     }
 
 }

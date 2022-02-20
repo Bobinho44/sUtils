@@ -17,7 +17,7 @@ public class sUtilsTeleportationRules {
 
         //Checks if there is another player around the player
         return Bukkit.getOnlinePlayers().stream().
-                anyMatch(onlinePlayer -> !onlinePlayer.equals(player) && onlinePlayer.getLocation().distance(player.getLocation()) < 100) ? 0 : 10;
+                anyMatch(onlinePlayer -> !onlinePlayer.equals(player) && onlinePlayer.getLocation().distance(player.getLocation()) < 100) ? 10 : 0;
     }
 
 }

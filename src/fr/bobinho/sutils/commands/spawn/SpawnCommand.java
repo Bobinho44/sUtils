@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.Syntax;
 import fr.bobinho.sutils.sUtilsCore;
 import fr.bobinho.sutils.utils.location.sUtilsLocationUtil;
 import fr.bobinho.sutils.utils.teleportation.sUtilsTeleportation;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,10 +29,16 @@ public class SpawnCommand extends BaseCommand {
             Player sender = (Player) commandSender;
 
             //Gets spawn
-            Location spawn = sUtilsLocationUtil.getAsLocation(sUtilsCore.getMainSettings().getConfiguration().getString("spawn", "world:0:1000:0:0:0"));
+            String worldType = sender.getWorld().getName();
+            Location spawn = sUtilsLocationUtil.getAsLocation(sUtilsCore.getMainSettings().getConfiguration().getString("spawn." + worldType, worldType + ":0:1000:0:0:0"));
 
             //Teleport the player;
             sUtilsTeleportation.teleport(sender, spawn);
+
+            //Sends the message
+            if (worldType.equalsIgnoreCase("world")) {
+                sender.sendMessage(ChatColor.GREEN + "Teleporting to spawn...");
+            }
         }
     }
 

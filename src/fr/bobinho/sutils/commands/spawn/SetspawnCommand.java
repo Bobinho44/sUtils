@@ -7,6 +7,7 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Syntax;
 import fr.bobinho.sutils.sUtilsCore;
 import fr.bobinho.sutils.utils.location.sUtilsLocationUtil;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,8 +26,12 @@ public class SetspawnCommand extends BaseCommand {
         if (commandSender instanceof Player) {
             Player sender = (Player) commandSender;
 
-            //Defines the new spawn
-            sUtilsCore.getMainSettings().getConfiguration().set("spawn", sUtilsLocationUtil.getAsString(sender.getLocation()));
+            //Sets the spawn
+            sUtilsCore.getMainSettings().getConfiguration().set("spawn." + sender.getWorld().getName(), sUtilsLocationUtil.getAsString(sender.getLocation()));
+            sUtilsCore.getMainSettings().save();
+
+            //Sends the message
+            sender.sendMessage(ChatColor.GREEN + "You have defined the new " + sender.getWorld().getName() + " spawn.");
         }
     }
 

@@ -12,42 +12,38 @@ import org.bukkit.entity.Player;
 public class HomeCommand extends BaseCommand {
 
     /**
-     * Command home (information)
+     * Command home
      *
      * @param commandSender the sender
      */
     @Default
     @Syntax("/home")
     @CommandPermission("sutils.home")
-    public void onHomeInformationCommand(CommandSender commandSender) {
+    public void onHomeInformationCommand(CommandSender commandSender, @Optional String homeName) {
         if (commandSender instanceof Player) {
             Player sender = (Player) commandSender;
 
-            //Sends the homes list
-            sender.sendMessage(sUtilsHomeManager.getsUtilsHomesAsClickableString(sender));
+            if (homeName == null) {
 
-        }
-    }
-
-    /**
-     * Command home (teleportation)
-     *
-     * @param commandSender the sender
-     */
-    @Syntax("/home <name>")
-    @CommandPermission("sutils.home")
-    public void onHomeTeleportationCommand(CommandSender commandSender, @Single String homeName) {
-        if (commandSender instanceof Player) {
-            Player sender = (Player) commandSender;
-
-            //Checks if the home exist
-            if (!sUtilsHomeManager.isItsUtilsHome(sender, homeName)) {
-                sender.sendMessage(ChatColor.RED + "The home " + homeName + " doesn't exist!");
-                return;
+                //Sends the homes list
+                sender.sendMessage(sUtilsHomeManager.getsUtilsHomesAsClickableString(sender));
             }
 
-            //Teleports the player
-            sUtilsTeleportation.teleport(sender, sUtilsHomeManager.getsUtilsHome(sender, homeName).get().getLocation());
+            else {
+
+                //Checks if the home exist
+                if (!sUtilsHomeManager.isItsUtilsHome(sender, homeName)) {
+                    sender.sendMessage(ChatColor.RED + "The home " + homeName + " doesn't exist!");
+                    return;
+                }
+
+                //Sends message
+                sender.sendMessage(ChatColor.GREEN + "Teleportation to the home " + homeName + ".");
+
+                //Teleports the player
+                sUtilsTeleportation.teleport(sender, sUtilsHomeManager.getsUtilsHome(sender, homeName).get().getLocation());
+            }
+
         }
     }
 

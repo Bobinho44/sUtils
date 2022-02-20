@@ -3,6 +3,9 @@ main: fr.bobinho.sutils.sUtilsCore
 version: 0.0.1
 author: Bobinho
 api-version: 1.18
+depend:
+  - OpenInv
+  - WorldBorderAPI
 commands:
   delhome:
     description: Deletes home.
@@ -40,3 +43,11 @@ commands:
     description: Gets rules link.
     usage: /rules
     permission: sutils.rules
+  createsafezone:
+    description: Creates safezone.
+    usage: /createsafezone <radius>
+    permission: sutils.createsafezone
+  delsafezone:
+    description: Deletes safezone.
+    usage: /delsafezone
+    permission: sutils.delsafezone

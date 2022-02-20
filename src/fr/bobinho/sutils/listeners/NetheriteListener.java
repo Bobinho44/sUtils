@@ -26,7 +26,7 @@ public class NetheriteListener implements Listener {
         }
 
         //Checks if the netherite system is enable
-        e.setCancelled(sUtilsCore.getMainSettings().getConfiguration().getBoolean("enableNetherite"));
+        e.setCancelled(!sUtilsCore.getMainSettings().getConfiguration().getBoolean("enableNetherite"));
     }
 
     /**
@@ -43,7 +43,7 @@ public class NetheriteListener implements Listener {
         //Drops diamond (with fortune system)
         e.setDropItems(false);
         ItemStack miningTool = e.getPlayer().getInventory().getItemInMainHand();
-        ItemStack droppedItem = new ItemStack(Material.DIAMOND, miningTool == null ? 0 : getNumberOfDroppedDiamond(miningTool));
+        ItemStack droppedItem = new ItemStack(Material.DIAMOND, getNumberOfDroppedDiamond(miningTool));
         e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation(), droppedItem);
     }
 
@@ -58,7 +58,7 @@ public class NetheriteListener implements Listener {
 
         int fortune = item.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
         for (int i = 3; i > 0; i--) {
-            if (fortune > 0 && fortune >= i && Math.random() < 0.1 * (20 + (3 * i) * 5)) {
+            if (fortune > 0 && fortune >= i && Math.random() < 0.01 * (20 + (3 - i) * 5)) {
                 return i + 1;
             }
         }

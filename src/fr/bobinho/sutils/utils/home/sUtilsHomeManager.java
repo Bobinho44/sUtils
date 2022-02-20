@@ -2,6 +2,8 @@ package fr.bobinho.sutils.utils.home;
 
 import fr.bobinho.sutils.sUtilsCore;
 import fr.bobinho.sutils.utils.location.sUtilsLocationUtil;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -85,20 +87,20 @@ public class sUtilsHomeManager {
                 .max(Integer::compare).stream().filter(value -> value >= 5).findFirst().orElse(5);
     }
 
-    public static String getsUtilsHomesAsClickableString(@Nonnull Player owner) {
+    public static BaseComponent[] getsUtilsHomesAsClickableString(@Nonnull Player owner) {
         Validate.notNull(owner, "owner is null");
 
         //Creates the homes clickable string
         List<sUtilsHome> homes = getPlayersUtilsHomes(owner);
-        StringBuilder homesClickableString = new StringBuilder(ChatColor.GRAY + "-=+=- Home list (" + getNumberOfsUtilsHomes(owner) + "/" + getNumberOfsUtilsHomesAllowed(owner) + ") -=+=-\n");
+        ComponentBuilder homesClickableString = new ComponentBuilder(ChatColor.GRAY + "-=+=- Home list (" + getNumberOfsUtilsHomes(owner) + "/" + getNumberOfsUtilsHomesAllowed(owner) + ") -=+=-\n[ ");
         for (int i = 0; i < homes.size(); i++) {
             homesClickableString.append(homes.get(i).getClickableTeleportationString());
             if (i < homes.size() - 1) {
-                homesClickableString.append(", ");
+                homesClickableString.append(ChatColor.GRAY  + ", ");
             }
         }
 
-        return homesClickableString.toString();
+        return homesClickableString.append(ChatColor.GRAY  + " ]").create();
     }
 
     public static void loadsUtilsHomes(@Nonnull Player owner) {
@@ -123,12 +125,14 @@ public class sUtilsHomeManager {
         Validate.notNull(owner, "owner is null");
 
         YamlConfiguration configuration = sUtilsCore.getHomesSettings().getConfiguration();
+        configuration.set(owner.getUniqueId().toString(), null);
 
         //Saves player homes
         for (sUtilsHome home : getPlayersUtilsHomes(owner)) {
-            configuration.set(owner.getUniqueId() + "." + home.getName(), home.getLocation());
+            configuration.set(owner.getUniqueId() + "." + home.getName(), sUtilsLocationUtil.getAsString(home.getLocation()));
         }
 
+        sUtilsCore.getHomesSettings().save();
     }
 
 }

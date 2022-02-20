@@ -28,7 +28,7 @@ public class PotionListener implements Listener {
 
         //Checks if disable potion is used
         for (PotionEffect potion : e.getEntity().getEffects()) {
-            if (potion.getType() == PotionEffectType.SLOW_FALLING || (potion.getType().getName().equalsIgnoreCase("slow") && potion.getAmplifier() >= 3)) {
+            if (potion.getType().getName().equals("SLOW_FALLING") || (potion.getType().getName().equals("SLOW") && potion.getAmplifier() >= 3)) {
                 e.setCancelled(true);
                 break;
             }
@@ -47,10 +47,9 @@ public class PotionListener implements Listener {
      */
     @EventHandler
     public void onSplashPotion(PotionSplashEvent e) {
-
         //Checks if disable potion is used
         for (PotionEffect potion : e.getEntity().getEffects()) {
-            if (potion.getType() == PotionEffectType.SLOW_FALLING || (potion.getType().getName().equalsIgnoreCase("slow") && potion.getAmplifier() >= 3)) {
+            if (potion.getType().getName().equals("SLOW_FALLING") || (potion.getType().getName().equals("SLOW") && potion.getAmplifier() >= 3)) {
                 e.setCancelled(true);
                 break;
             }

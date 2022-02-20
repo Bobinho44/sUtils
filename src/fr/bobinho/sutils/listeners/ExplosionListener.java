@@ -1,26 +1,35 @@
 package fr.bobinho.sutils.listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class ExplosionListener implements Listener {
 
     @EventHandler
     public void onCrystalExplode(EntityExplodeEvent e) {
-        Bukkit.getConsoleSender().sendMessage(e.getEntity().getName());
-        e.setCancelled(true);
-        e.getEntity().remove();
+        e.setCancelled(e.getEntityType() == EntityType.ENDER_CRYSTAL);
+    }
+
+    @EventHandler
+    public void onPlayerIsDamagedByCrystal(EntityDamageByEntityEvent e) {
+        e.setCancelled(e.getDamager().getType() == EntityType.ENDER_CRYSTAL);
     }
 
     @EventHandler
     public void onAnchorExplode(BlockExplodeEvent e) {
-        Bukkit.getConsoleSender().sendMessage(e.getBlock().getType().name());
-        e.setCancelled(true);
-        e.getBlock().setType(Material.AIR);
+        e.setCancelled(e.getYield() == 0.2F);
+    }
+
+    @EventHandler
+    public void onPlayerIsDamagedByAnchor(EntityDamageEvent e) {
+        e.setCancelled(e.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
     }
 
 }

@@ -5,7 +5,6 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Syntax;
-import com.lishid.openinv.util.InventoryAccess;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,7 +24,7 @@ public class EchestCommand extends BaseCommand {
             Player sender = (Player) commandSender;
 
             //Opens the ender chest
-            InventoryAccess.getEnderChest(sender.getEnderChest());
+            sender.performCommand("openender " + sender.getName());
         }
     }
 

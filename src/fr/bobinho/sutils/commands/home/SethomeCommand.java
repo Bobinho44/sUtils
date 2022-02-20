@@ -16,7 +16,7 @@ public class SethomeCommand extends BaseCommand {
      * @param commandSender the sender
      */
     @Default
-    @Syntax("/sethome")
+    @Syntax("/sethome <name>")
     @CommandPermission("sutils.sethome")
     public void onSethomeCommand(CommandSender commandSender, @Single String homeName) {
         if (commandSender instanceof Player) {

@@ -22,12 +22,12 @@ public class sUtilsTeleportation {
 
         //Checks if the player is in combat
         else if (sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(player)) {
-            player.sendMessage(ChatColor.RED + "you are in combat!" + ChatColor.GRAY + "Teleporting in 10 seconds.");
+            player.sendMessage(ChatColor.RED + "You are in combat!" + ChatColor.GRAY + " Teleporting in 10 seconds.");
         }
 
         //Checks if there is another player around the player
         else if (teleportationCooldown == 10) {
-            player.sendMessage(ChatColor.RED + "Enemies nearby!" + ChatColor.GRAY + "Teleporting in 10 seconds.");
+            player.sendMessage(ChatColor.RED + "Enemies nearby!" + ChatColor.GRAY + " Teleporting in 10 seconds.");
         }
 
         //Adds teleportation cooldown
