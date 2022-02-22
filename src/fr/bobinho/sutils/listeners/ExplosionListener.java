@@ -1,8 +1,7 @@
 package fr.bobinho.sutils.listeners;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -20,6 +19,21 @@ public class ExplosionListener implements Listener {
     @EventHandler
     public void onPlayerIsDamagedByCrystal(EntityDamageByEntityEvent e) {
         e.setCancelled(e.getDamager().getType() == EntityType.ENDER_CRYSTAL);
+    }
+
+    @EventHandler
+    public void onMinecartTntExplode(EntityExplodeEvent e) {
+        e.setCancelled(e.getEntityType() == EntityType.MINECART_TNT);
+    }
+
+    /**
+     * Listen when a minecraft tnt damage a player
+     *
+     * @param e the entity damage by entity event
+     */
+    @EventHandler
+    public void onPlayerIsDamagedByMinecartTnt(EntityDamageByEntityEvent e) {
+        e.setCancelled(e.getDamager() instanceof ExplosiveMinecart);
     }
 
     @EventHandler

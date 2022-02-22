@@ -37,9 +37,6 @@ public class HomeCommand extends BaseCommand {
                     return;
                 }
 
-                //Sends message
-                sender.sendMessage(ChatColor.GREEN + "Teleportation to the home " + homeName + ".");
-
                 //Teleports the player
                 sUtilsTeleportation.teleport(sender, sUtilsHomeManager.getsUtilsHome(sender, homeName).get().getLocation());
             }

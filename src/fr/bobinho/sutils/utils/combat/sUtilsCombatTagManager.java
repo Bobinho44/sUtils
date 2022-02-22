@@ -10,7 +10,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -79,19 +78,19 @@ public class sUtilsCombatTagManager {
      *
      * @param player the player
      */
-    public static void createsUtilsPlayerCombatTag(@Nonnull Player player, @Nullable Player lastDamager) {
+    public static void createsUtilsPlayerCombatTag(@Nonnull Player player, @Nonnull Player lastDamager) {
         Validate.notNull(player, "player is null");
 
         //Creates the player combat tag
         if (!isItsUtilsPlayerCombatTag(player)) {
-            getsUtilsPlayersCombatTagList().add(new sUtilsCombatTag(player, lastDamager));
+            getsUtilsPlayersCombatTagList().add(new sUtilsCombatTag(player, lastDamager.getName()));
             player.sendMessage(ChatColor.RED + "You are now in combat!");
         }
 
         //Updates the player combat tag
         else {
             sUtilsCombatTag combatTag = getsUtilsPlayerCombatTag(player).get();
-            combatTag.setLastDamager(lastDamager);
+            combatTag.setLastDamagerName(lastDamager.getName());
             combatTag.resetDuration();
         }
 

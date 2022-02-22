@@ -4,7 +4,6 @@ import fr.bobinho.sutils.utils.combat.sUtilsCombatTagManager;
 import fr.bobinho.sutils.utils.scheduler.sUtilsScheduler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -44,10 +43,10 @@ public class CombatListener implements Listener {
         //Checks if the player leave the game because someone attacks him
         if (e.getPlayer().getLastDamageCause() != null && e.getPlayer().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.CUSTOM || e.getPlayer().getLastDamageCause().getDamage() == 999D) {
 
-            Player lastDamager = sUtilsCombatTagManager.getsUtilsPlayerCombatTag(e.getPlayer()).get().getLastDamager();
+            String lastDamagerName = sUtilsCombatTagManager.getsUtilsPlayerCombatTag(e.getPlayer()).get().getLastDamagerName();
 
             //Sends the death message
-            e.deathMessage(Component.text("[Combat Logger] " + e.getPlayer().getName() + " was slain by " + lastDamager.getName() + ".", NamedTextColor.RED));
+            e.deathMessage(Component.text("[Combat Logger] " + e.getPlayer().getName() + " was slain by " + lastDamagerName + ".", NamedTextColor.RED));
         }
 
         //Checks if player was in combat
@@ -81,7 +80,7 @@ public class CombatListener implements Listener {
      */
     @EventHandler
     public void onPlayerUseRocketWithElytra(PlayerInteractEvent e) {
-        if (!e.getPlayer().isGliding() || !sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer()) || e.getItem() == null || e.getItem().getType() != Material.FIREWORK_ROCKET || e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+        if (!e.getPlayer().isGliding() || !sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer()) || e.getItem() == null || e.getItem().getType() != Material.FIREWORK_ROCKET || e.getAction() != Action.RIGHT_CLICK_AIR || e.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
 

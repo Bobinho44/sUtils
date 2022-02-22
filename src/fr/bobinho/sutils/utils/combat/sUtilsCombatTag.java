@@ -13,7 +13,7 @@ public class sUtilsCombatTag {
      * Fields
      */
     private final Player player;
-    private Player lastDamager;
+    private String lastDamagerName;
     private final Stopwatch duration;
 
     /**
@@ -21,11 +21,12 @@ public class sUtilsCombatTag {
      *
      * @param player the player
      */
-    public sUtilsCombatTag(@Nonnull Player player, @Nullable Player lastDamager) {
+    public sUtilsCombatTag(@Nonnull Player player, @Nullable String lastDamagerName) {
         Validate.notNull(player, "player is null");
+        Validate.notNull(lastDamagerName, "lastDamagerName is null");
 
         this.player = player;
-        this.lastDamager = lastDamager;
+        this.lastDamagerName = lastDamagerName;
         this.duration = Stopwatch.createStarted();
     }
 
@@ -40,13 +41,13 @@ public class sUtilsCombatTag {
     }
 
     /**
-     * Gets the last player damager
+     * Gets the last damager name
      *
-     * @return the last player damager
+     * @return the last damager name
      */
     @Nullable
-    public Player getLastDamager() {
-        return lastDamager;
+    public String getLastDamagerName() {
+        return lastDamagerName;
     }
 
     /**
@@ -60,12 +61,12 @@ public class sUtilsCombatTag {
     }
 
     /**
-     * Sets the last player damager
+     * Sets the last damager name
      *
-     * @param lastDamager the last player damager
+     * @param lastDamagerName the last damager name
      */
-    public void setLastDamager(Player lastDamager) {
-        this.lastDamager = lastDamager;
+    public void setLastDamagerName(String lastDamagerName) {
+        this.lastDamagerName = lastDamagerName;
     }
 
     /**

@@ -3,7 +3,6 @@ package fr.bobinho.sutils.listeners;
 import org.bukkit.Material;
 import org.bukkit.entity.Evoker;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -21,18 +20,6 @@ public class DisablingListener implements Listener {
     public void onDropTotemOfUndying(EntityDeathEvent e) {
         if (e.getEntity() instanceof Evoker) {
             e.getDrops().removeIf(item -> item.getType() == Material.TOTEM_OF_UNDYING);
-        }
-    }
-
-    /**
-     * Listen when a minecraft tnt damage a player
-     *
-     * @param e the entity damage by entity event
-     */
-    @EventHandler
-    public void onMinecraftTntExplode(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player && e.getDamager() instanceof ExplosiveMinecart) {
-            e.setCancelled(true);
         }
     }
 
