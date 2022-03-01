@@ -1,28 +1,27 @@
 package fr.bobinho.sutils;
 
 import co.aikar.commands.PaperCommandManager;
-import com.github.yannicklamprecht.worldborder.api.BorderAPI;
-import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
 import fr.bobinho.sutils.commands.EchestCommand;
 import fr.bobinho.sutils.commands.RulesCommand;
 import fr.bobinho.sutils.commands.home.DelhomeCommand;
 import fr.bobinho.sutils.commands.home.HomeCommand;
 import fr.bobinho.sutils.commands.home.SethomeCommand;
-import fr.bobinho.sutils.commands.home.safezone.CreatesafezoneCommand;
-import fr.bobinho.sutils.commands.home.safezone.DelsafezoneCommand;
+import fr.bobinho.sutils.commands.safezone.CreatesafezoneCommand;
+import fr.bobinho.sutils.commands.safezone.DelsafezoneCommand;
 import fr.bobinho.sutils.commands.spawn.SetspawnCommand;
 import fr.bobinho.sutils.commands.spawn.SpawnCommand;
 import fr.bobinho.sutils.commands.teleportation.TpaCommand;
 import fr.bobinho.sutils.commands.teleportation.TpyesCommand;
 import fr.bobinho.sutils.listeners.*;
 import fr.bobinho.sutils.utils.safezone.sUtilsSafezoneManager;
+import fr.bobinho.sutils.utils.scheduler.sUtilsScheduler;
 import fr.bobinho.sutils.utils.settings.sUtilsSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.TimeUnit;
 
 public class sUtilsCore extends JavaPlugin {
 
@@ -33,7 +32,6 @@ public class sUtilsCore extends JavaPlugin {
     private static sUtilsSettings mainSettings;
     private static sUtilsSettings safezonesSettings;
     private static sUtilsSettings homesSettings;
-    private static WorldBorderApi worldBorderApi;
 
     /**
      * Gets the sutils core instance
@@ -76,22 +74,12 @@ public class sUtilsCore extends JavaPlugin {
     }
 
     /**
-     * Gets the world border api
-     *
-     * @return the world border api
-     */
-    @Nonnull
-    public static WorldBorderApi getWorldBorderApi() {
-        return worldBorderApi;
-    }
-
-    /**
      * Enable and initialize the plugin
      */
     public void onEnable() {
         instance = this;
 
-        Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[LuxePractice] Loading the plugin...");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[sUtils] Loading the plugin...");
 
         //Registers commands and listeners
         registerCommands();
@@ -102,26 +90,19 @@ public class sUtilsCore extends JavaPlugin {
         safezonesSettings = new sUtilsSettings("safezones");
         homesSettings = new sUtilsSettings("homes");
 
-        //Registers world border api
-        RegisteredServiceProvider<WorldBorderApi> worldBorderApiRegisteredServiceProvider = getServer().getServicesManager().getRegistration(WorldBorderApi.class);
-
-        if (worldBorderApiRegisteredServiceProvider == null) {
-            getLogger().info("API not found");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        worldBorderApi = worldBorderApiRegisteredServiceProvider.getProvider();
-
         //Loads safezones
         sUtilsSafezoneManager.loadsUtilsSafezone();
+
+        sUtilsScheduler.asyncScheduler().every(10, TimeUnit.MINUTES).run(() -> {
+            Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.YELLOW + "[BobiSecurity] This plugin has not been purchased, run away from this server!"));
+        });
     }
 
     /**
      * Disable the plugin and save data
      */
     public void onDisable() {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[LuxePractice] Unloading the plugin...");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[sUtils] Unloading the plugin...");
 
         //Saves safezones
         sUtilsSafezoneManager.savesUtilsSafezone();

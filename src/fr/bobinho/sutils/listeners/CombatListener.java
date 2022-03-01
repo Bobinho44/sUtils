@@ -98,13 +98,8 @@ public class CombatListener implements Listener {
     public void onPlayerUseEnderPearl(PlayerInteractEvent e) {
         if (e.getItem() != null && e.getItem().getType() == Material.ENDER_PEARL && (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)) {
 
-            if (!sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer())) {
-                e.getPlayer().setCooldown(Material.ENDER_PEARL, 0);
-                return;
-            }
-
             //Checks if the player is already in the cooldown
-            if (e.getPlayer().hasCooldown(Material.ENDER_PEARL)) {
+            if (e.getPlayer().hasCooldown(Material.ENDER_PEARL) || !sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer())) {
                 return;
             }
 

@@ -84,7 +84,7 @@ public class sUtilsHomeManager {
         return owner.getEffectivePermissions().stream()
                 .filter(permission -> permission.getPermission().contains("sutils.homes"))
                 .map(permission -> Integer.valueOf(permission.getPermission().split("sutils.homes")[1]))
-                .max(Integer::compare).stream().filter(value -> value >= 5).findFirst().orElse(5);
+                .max(Integer::compare).stream().filter(value -> value >= 5).findFirst().orElse(3);
     }
 
     public static BaseComponent[] getsUtilsHomesAsClickableString(@Nonnull Player owner) {

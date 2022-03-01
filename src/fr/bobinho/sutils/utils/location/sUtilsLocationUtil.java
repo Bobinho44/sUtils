@@ -47,4 +47,17 @@ public class sUtilsLocationUtil {
         );
     }
 
+    public static boolean isBetweenTwo1DPoint(double coordinates1, double coordinates2, double tested) {
+
+        return (tested >= coordinates1 && tested <= coordinates2) || (tested <= coordinates1 && tested >= coordinates2);
+    }
+
+    public static boolean isBetweenTwo2DPoint(@Nonnull Location location1, @Nonnull Location location2, @Nonnull Location tested) {
+        Validate.notNull(location1, "location1 is null");
+        Validate.notNull(location2, "location2 is null");
+        Validate.notNull(tested, "tested is null");
+
+        return isBetweenTwo1DPoint(location1.getX(), location2.getX(), tested.getX()) && isBetweenTwo1DPoint(location1.getZ(), location2.getZ(), tested.getZ());
+    }
+
 }

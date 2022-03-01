@@ -4,7 +4,6 @@ import fr.bobinho.sutils.sUtilsCore;
 import fr.bobinho.sutils.utils.location.sUtilsLocationUtil;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -21,86 +20,66 @@ public class sUtilsSafezoneManager {
         return sUtilsSafezones;
     }
 
-    public static Optional<sUtilsSafezone> getsUtilsSafezone(@Nonnull World.Environment environment) {
-        Validate.notNull(environment, "environment is null");
+    public static Optional<sUtilsSafezone> getsUtilsSafezone(@Nonnull String name) {
+        Validate.notNull(name, "name is null");
 
-        return getsUtilsSafezones().stream().filter(safezone -> safezone.getEnvironment().equals(environment)).findFirst();
+        return getsUtilsSafezones().stream().filter(safezone -> safezone.getName().equalsIgnoreCase(name)).findFirst();
     }
 
-    public static boolean isItsUtilsSafezone(@Nonnull World.Environment environment) {
-        Validate.notNull(environment, "environment is null");
+    public static boolean isItsUtilsSafezone(@Nonnull String name) {
+        Validate.notNull(name, "name is null");
 
-        return getsUtilsSafezone(environment).isPresent();
+        return getsUtilsSafezone(name).isPresent();
     }
 
-    public static void createsUtilsSafezone(@Nonnull Location center, int radius) {
-        Validate.notNull(center, "center is null");
+    public static void createsUtilsSafezone(@Nonnull String name, @Nonnull Location corner, @Nonnull Location oppositeCorner) {
+        Validate.notNull(name, "name is null");
+        Validate.notNull(corner, "corner is null");
+        Validate.notNull(oppositeCorner, "oppositeCorner is null");
+        Validate.isTrue(!isItsUtilsSafezone(name), "safezone already exist");
 
-        createsUtilsSafezone(center, radius, center.getWorld().getEnvironment());
+        getsUtilsSafezones().add(new sUtilsSafezone(name, corner, oppositeCorner));
     }
 
-    public static void createsUtilsSafezone(@Nonnull Location center, int radius, @Nonnull World.Environment environment) {
-        Validate.notNull(center, "center is null");
-        Validate.notNull(environment, "environment is null");
+    public static void deleteUtilsSafezone(@Nonnull String name) {
+        Validate.notNull(name, "name is null");
+        Validate.isTrue(isItsUtilsSafezone(name), "safezone doesn't exist");
 
-        if (isItsUtilsSafezone(environment)) {
-            deleteUtilsSafezone(environment);
-        }
-
-        getsUtilsSafezones().add(new sUtilsSafezone(center, radius, environment));
-    }
-
-    public static void deleteUtilsSafezone(@Nonnull World.Environment environment) {
-        Validate.notNull(environment, "environment is null");
-        Validate.isTrue(isItsUtilsSafezone(environment), "safezone is not set in this environment");
-
-        getsUtilsSafezones().remove(getsUtilsSafezone(environment).get());
+        getsUtilsSafezones().remove(getsUtilsSafezone(name).get());
     }
 
     public static boolean isItInsUtilsSafezone(@Nonnull Location location) {
         Validate.notNull(location, "location is null");
 
-        //Checks if there is a safezone in the world location
-        if (!isItsUtilsSafezone(location.getWorld().getEnvironment())) {
-            return false;
-        }
-
-        //Gets the safezone
-        sUtilsSafezone safezone = getsUtilsSafezone(location.getWorld().getEnvironment()).get();
-
-        //Checks if the distance between location and safezone center <= safezone radius
-        return Math.abs(location.getX() - safezone.getCenter().getX()) <= safezone.getRadius() && Math.abs(location.getZ() - safezone.getCenter().getZ()) <= safezone.getRadius();
+        return getsUtilsSafezones().stream()
+                .filter(safezone -> safezone.getWorld().equals(location.getWorld()))
+                .anyMatch(safezone -> sUtilsLocationUtil.isBetweenTwo2DPoint(safezone.getCorner(), safezone.getOppositeCorner(), location));
     }
 
-    public static void showsUtilsSafezone(@Nonnull Player player) {
+    public static void showsUtilsSafezones(@Nonnull Player player) {
         Validate.notNull(player, "player is null");
-        Validate.isTrue(isItsUtilsSafezone(player.getWorld().getEnvironment()), "safezone is not set");
 
-        //Gets the safezone
-        sUtilsSafezone safezone = getsUtilsSafezone(player.getWorld().getEnvironment()).get();
-
-        //Show the safezone
-        sUtilsCore.getWorldBorderApi().setBorder(player, safezone.getRadius() + 3, safezone.getCenter());
+        getsUtilsSafezones().forEach(safezone -> safezone.addViewer(player));
     }
 
-    public static void hidesUtilsSafezone(@Nonnull Player player) {
+    public static void hidesUtilsSafezones(@Nonnull Player player) {
         Validate.notNull(player, "player is null");
 
-        sUtilsCore.getWorldBorderApi().resetWorldBorderToGlobal(player);
+        getsUtilsSafezones().forEach(safezone -> safezone.removeViewer(player));
     }
 
     public static void loadsUtilsSafezone() {
         YamlConfiguration configuration = sUtilsCore.getSafezonesSettings().getConfiguration();
 
         //Loads the practice arenas
-        for (String safezoneEnvironment : configuration.getKeys(false)) {
+        for (String safezoneName : configuration.getKeys(false)) {
 
             //Gets safezones informations
-            Location center = sUtilsLocationUtil.getAsLocation(configuration.getString(safezoneEnvironment + ".center", safezoneEnvironment + ":0:100:0:0:0"));
-            int radius = configuration.getInt(safezoneEnvironment + ".radius");
+            Location corner = sUtilsLocationUtil.getAsLocation(configuration.getString(safezoneName + ".corner", "world:0:100:0:0:0"));
+            Location oppositeCorner = sUtilsLocationUtil.getAsLocation(configuration.getString(safezoneName + ".oppositeCorner", "world:0:100:0:0:0"));
 
             //Creates the safezone
-            createsUtilsSafezone(center, radius, World.Environment.valueOf(safezoneEnvironment));
+            createsUtilsSafezone(safezoneName, corner, oppositeCorner);
         }
     }
 
@@ -110,8 +89,8 @@ public class sUtilsSafezoneManager {
 
         //Saves safezones
         for (sUtilsSafezone safezone : getsUtilsSafezones()) {
-            configuration.set(safezone.getEnvironment() + ".center", sUtilsLocationUtil.getAsString(safezone.getCenter()));
-            configuration.set(safezone.getEnvironment() + ".radius", safezone.getRadius());
+            configuration.set(safezone.getName() + ".corner", sUtilsLocationUtil.getAsString(safezone.getCorner()));
+            configuration.set(safezone.getName() + ".oppositeCorner", sUtilsLocationUtil.getAsString(safezone.getOppositeCorner()));
         }
 
         sUtilsCore.getSafezonesSettings().save();

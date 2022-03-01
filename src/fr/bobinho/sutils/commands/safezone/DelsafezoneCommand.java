@@ -1,4 +1,4 @@
-package fr.bobinho.sutils.commands.home.safezone;
+package fr.bobinho.sutils.commands.safezone;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
@@ -16,23 +16,23 @@ public class DelsafezoneCommand extends BaseCommand {
      * @param commandSender the sender
      */
     @Default
-    @Syntax("/delsafezone")
+    @Syntax("/delsafezone <name>")
     @CommandPermission("sutils.delsafezone")
-    public void onDelsafezoneCommand(CommandSender commandSender) {
+    public void onDelsafezoneCommand(CommandSender commandSender, @Single String name) {
         if (commandSender instanceof Player) {
             Player sender = (Player) commandSender;
 
             //Checks if the safezone exist
-            if (!sUtilsSafezoneManager.isItsUtilsSafezone(sender.getWorld().getEnvironment())) {
-                sender.sendMessage(ChatColor.RED + "The safezone of the world " + sender.getWorld().getEnvironment().name() + " doesn't exist!");
+            if (!sUtilsSafezoneManager.isItsUtilsSafezone(name)) {
+                sender.sendMessage(ChatColor.RED + "The safezone " + name + " doesn't exist!");
                 return;
             }
 
             //Deletes the safezone
-            sUtilsSafezoneManager.deleteUtilsSafezone(sender.getWorld().getEnvironment());
+            sUtilsSafezoneManager.deleteUtilsSafezone(name);
 
             //Sends message
-            sender.sendMessage(ChatColor.GREEN + "You have deleted the safezone of the world " + sender.getWorld().getEnvironment().name() + ".");
+            sender.sendMessage(ChatColor.GREEN + "You have deleted the safezone " + name + ".");
         }
     }
 

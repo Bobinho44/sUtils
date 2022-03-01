@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -95,9 +96,7 @@ public class sUtilsCombatTagManager {
         }
 
         //Show safezone border
-        if (sUtilsSafezoneManager.isItsUtilsSafezone(player.getWorld().getEnvironment())) {
-            sUtilsSafezoneManager.showsUtilsSafezone(player);
-        }
+        sUtilsSafezoneManager.showsUtilsSafezones(player);
     }
 
     /**
@@ -110,7 +109,8 @@ public class sUtilsCombatTagManager {
 
         //Delete the player combat tag
         getsUtilsPlayersCombatTagList().remove(getsUtilsPlayerCombatTag(player).get());
-        sUtilsSafezoneManager.hidesUtilsSafezone(player);
+        player.setCooldown(Material.ENDER_PEARL, 0);
+        sUtilsSafezoneManager.hidesUtilsSafezones(player);
         player.sendMessage(ChatColor.GREEN + "You are no longer in combat.");
     }
 

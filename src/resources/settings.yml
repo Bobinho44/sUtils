@@ -3,3 +3,4 @@ joinMessage:
   - "&a%player% joined the server."
   - "&e--------------------------."
 enableNetherite: true
+enderchest: 10
