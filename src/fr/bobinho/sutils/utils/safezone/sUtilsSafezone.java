@@ -36,7 +36,7 @@ public class sUtilsSafezone {
         this.corner = corner;
         this.oppositeCorner = oppositeCorner;
 
-        sUtilsScheduler.asyncScheduler().every(1, TimeUnit.SECONDS).run(() -> {
+        sUtilsScheduler.asyncScheduler().every(3, TimeUnit.SECONDS).run(() -> {
 
             if (!sUtilsSafezoneManager.isItsUtilsSafezone(getName())) {
                 return;
@@ -147,11 +147,11 @@ public class sUtilsSafezone {
         Validate.notNull(player, "player is null");
 
         //Loops safezone height
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 256; i += 3) {
             int increment = (int) ((length) / Math.abs(length));
 
             //Loops safezone side
-            for (int j = 0; (length > 0 && j < (int) length) || (length < 0 && j > (int) length); j += increment) {
+            for (int j = 0; (length > 0 && j < (int) length) || (length < 0 && j > (int) length); j += 3 * increment) {
                 player.spawnParticle(Particle.VILLAGER_HAPPY, new Location(getWorld(), x + (isChangeX ? j : 0), i, z + (isChangeX ? 0 : j)), 1, 0, 0, 0, 0);
             }
         }

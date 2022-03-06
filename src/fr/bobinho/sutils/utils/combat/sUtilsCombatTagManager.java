@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class sUtilsCombatTagManager {
 
     static {
-        sUtilsScheduler.asyncScheduler().every(1, TimeUnit.SECONDS).run(() -> {
+        sUtilsScheduler.syncScheduler().every(1, TimeUnit.SECONDS).run(() -> {
 
             //Removes players who have not been in combat for 60 seconds
             getsUtilsPlayersCombatTagList().stream()

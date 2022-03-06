@@ -92,10 +92,6 @@ public class sUtilsCore extends JavaPlugin {
 
         //Loads safezones
         sUtilsSafezoneManager.loadsUtilsSafezone();
-
-        sUtilsScheduler.asyncScheduler().every(10, TimeUnit.MINUTES).run(() -> {
-            Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.YELLOW + "[BobiSecurity] This plugin has not been purchased, run away from this server!"));
-        });
     }
 
     /**
