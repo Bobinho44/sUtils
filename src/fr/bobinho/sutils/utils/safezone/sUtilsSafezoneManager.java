@@ -59,13 +59,13 @@ public class sUtilsSafezoneManager {
     public static void showsUtilsSafezones(@Nonnull Player player) {
         Validate.notNull(player, "player is null");
 
-        getsUtilsSafezones().forEach(safezone -> safezone.addViewer(player));
+        getsUtilsSafezones().forEach(safezone -> safezone.show(player));
     }
 
     public static void hidesUtilsSafezones(@Nonnull Player player) {
         Validate.notNull(player, "player is null");
 
-        getsUtilsSafezones().forEach(safezone -> safezone.removeViewer(player));
+        getsUtilsSafezones().forEach(safezone -> safezone.hide(player));
     }
 
     public static void loadsUtilsSafezone() {

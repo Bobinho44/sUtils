@@ -30,8 +30,16 @@ public class sUtilsTeleportation {
             player.sendMessage(ChatColor.RED + "Enemies nearby!" + ChatColor.GRAY + " Teleporting in 10 seconds.");
         }
 
+        Location initialPlayerLocation = player.getLocation().clone();
+
         //Adds teleportation cooldown
         sUtilsScheduler.syncScheduler().after(sUtilsTeleportationRules.getsUtilsTeleportationCooldown(player), TimeUnit.SECONDS).run(() -> {
+
+            //If player move during the cooldown
+            if (initialPlayerLocation.distance(player.getLocation()) > 1) {
+                player.sendMessage(ChatColor.RED + "You moved... Teleportation cancelled!");
+                return;
+            }
 
             //Sends message
             player.sendMessage(ChatColor.GOLD + "Warping…");

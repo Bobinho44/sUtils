@@ -1,11 +1,15 @@
 package fr.bobinho.sutils.listeners;
 
+import fr.bobinho.sutils.sUtilsCore;
 import fr.bobinho.sutils.utils.combat.sUtilsCombatTagManager;
+import fr.bobinho.sutils.utils.location.sUtilsLocationUtil;
 import fr.bobinho.sutils.utils.scheduler.sUtilsScheduler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,6 +20,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.TimeUnit;
@@ -132,6 +137,21 @@ public class CombatListener implements Listener {
         e.getPlayer().sendActionBar(Component.text("Pearl Cooldown: ", NamedTextColor.RED)
                 .append(Component.text(e.getPlayer().getCooldown(Material.ENDER_PEARL) / 20, NamedTextColor.GRAY))
                 .append(Component.text("s", NamedTextColor.GRAY)));
+    }
+
+    /**
+     * Listen when a player use the ender portal to go to the overworld
+     *
+     * @param e the player teleport event
+     */
+    @EventHandler
+    public void onUseEndPortal(PlayerTeleportEvent e) {
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL && e.getTo().getWorld().getEnvironment() == World.Environment.NORMAL) {
+
+            //Removes tje combat tag
+            sUtilsCombatTagManager.deletesUtilsPlayerCombatTag(e.getPlayer());
+
+        }
     }
 
 }
