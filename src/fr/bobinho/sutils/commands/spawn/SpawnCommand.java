@@ -30,13 +30,13 @@ public class SpawnCommand extends BaseCommand {
 
             //Gets spawn
             String worldType = sender.getWorld().getName();
-            Location spawn = sUtilsLocationUtil.getAsLocation(sUtilsCore.getMainSettings().getConfiguration().getString("spawn." + worldType, worldType + ":0:1000:0:0:0"));
+            Location spawn = sUtilsLocationUtil.getAsLocation(sUtilsCore.getMainSettings().getConfiguration().getString("spawn.world", "world:0:1000:0:0:0"));
 
             //Teleport the player;
             sUtilsTeleportation.teleport(sender, spawn);
 
             //Sends the message
-            if (worldType.equalsIgnoreCase("world")) {
+            if (!worldType.equalsIgnoreCase("world_the_end")) {
                 sender.sendMessage(ChatColor.GREEN + "Teleporting to spawn...");
             }
         }

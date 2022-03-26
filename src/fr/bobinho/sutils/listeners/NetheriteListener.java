@@ -19,12 +19,14 @@ public class NetheriteListener implements Listener {
      */
     @EventHandler
     public void onInteractWithSmithingTable(PlayerInteractEvent e) {
-        if (e.getClickedBlock() == null || e.getClickedBlock().getType() != Material.SMITHING_TABLE) {
+        if (e.getClickedBlock() == null || e.getClickedBlock().getType() != Material.SMITHING_TABLE || e.getAction().name().contains("LEFT")) {
             return;
         }
 
         //Checks if the netherite system is enable
-        e.setCancelled(!sUtilsCore.getMainSettings().getConfiguration().getBoolean("enableNetherite"));
+        if (!sUtilsCore.getMainSettings().getConfiguration().getBoolean("enableNetherite")) {
+            e.setCancelled(true);
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package fr.bobinho.sutils.utils.teleportation;
 import fr.bobinho.steams.utils.team.Team;
 import fr.bobinho.steams.utils.team.TeamManager;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -23,10 +24,11 @@ public class sUtilsTeleportationRules {
                     Optional<Team> team1 = TeamManager.getTeam(player.getUniqueId());
                     Optional<Team> team2 = TeamManager.getTeam(onlinePlayer.getUniqueId());
 
-                    return (team2.isEmpty() && !onlinePlayer.equals(player)) ||
-                            (team1.isEmpty() && !onlinePlayer.equals(player)) ||
-                            (team1.isPresent() && team2.isPresent() && !team1.get().equals(team2.get())
-                            && !TeamManager.areAllied(team1.get(), team2.get()) && onlinePlayer.getLocation().distance(player.getLocation()) < 100);
+                    return ((team2.isEmpty() && !onlinePlayer.equals(player)) || (team1.isEmpty() && !onlinePlayer.equals(player)) || (team1.isPresent() && team2.isPresent() && !team1.get().equals(team2.get()) && !TeamManager.areAllied(team1.get(), team2.get()))) &&
+                            onlinePlayer.getLocation().getWorld().equals(player.getWorld()) &&
+                            onlinePlayer.getLocation().distance(player.getLocation()) < 100 &&
+                            onlinePlayer.getGameMode() == GameMode.SURVIVAL &&
+                            player.getGameMode() == GameMode.SURVIVAL;
                 }) ? 10 : 0;
     }
 

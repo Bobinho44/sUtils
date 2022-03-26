@@ -8,18 +8,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandAlias("tpa")
-public class TpaCommand extends BaseCommand {
+@CommandAlias("tpahere")
+public class TpahereCommand extends BaseCommand {
 
     /**
-     * Command tpa
+     * Command tpahere
      *
      * @param commandSender the sender
      */
     @Default
-    @Syntax("/tpa")
-    @CommandPermission("sutils.tpa")
-    public void onTpaCommand(CommandSender commandSender, @Single OnlinePlayer commandReceiver) {
+    @Syntax("/tpahere")
+    @CommandPermission("sutils.tpahere")
+    public void onTpahereCommand(CommandSender commandSender, @Single OnlinePlayer commandReceiver) {
         if (commandSender instanceof Player) {
             Player sender = (Player) commandSender;
             Player receiver = commandReceiver.getPlayer();
@@ -31,11 +31,11 @@ public class TpaCommand extends BaseCommand {
             }
 
             //Sends message
-            sender.sendMessage(ChatColor.GREEN + "You have sent a teleportation request to " + receiver.getName() + ".");
-            receiver.sendMessage(ChatColor.GREEN + "You have received a teleportation request from " + sender.getName() + ".");
+            sender.sendMessage(ChatColor.GREEN + "You have sent a request for " + receiver.getName() + " to teleport to you.");
+            receiver.sendMessage(ChatColor.GREEN + sender.getName() + " has requested that you teleport to them. Type /tpaccept to accept this request.");
 
             //Sends teleportation request
-            sUtilsTeleportationRequestManager.createsUtilsTeleportationRequest(sender, receiver, receiver.getLocation().clone(), sender);
+            sUtilsTeleportationRequestManager.createsUtilsTeleportationRequest(sender, receiver, sender.getLocation().clone(), receiver);
         }
     }
 

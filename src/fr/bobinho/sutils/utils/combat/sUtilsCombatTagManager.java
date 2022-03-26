@@ -62,6 +62,10 @@ public class sUtilsCombatTagManager {
         return getsUtilsPlayersCombatTagList().stream().filter(combatTag -> combatTag.getPlayer().equals(player)).findFirst();
     }
 
+    public static void clearCombatTags() {
+        getsUtilsPlayersCombatTagList().clear();
+    }
+
     /**
      * Checks if the player have a combat tag
      *

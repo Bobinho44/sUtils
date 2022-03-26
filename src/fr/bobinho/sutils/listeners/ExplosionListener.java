@@ -13,17 +13,23 @@ public class ExplosionListener implements Listener {
 
     @EventHandler
     public void onCrystalExplode(EntityExplodeEvent e) {
-        e.setCancelled(e.getEntityType() == EntityType.ENDER_CRYSTAL);
+        if (e.getEntityType() == EntityType.ENDER_CRYSTAL) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
     public void onPlayerIsDamagedByCrystal(EntityDamageByEntityEvent e) {
-        e.setCancelled(e.getDamager().getType() == EntityType.ENDER_CRYSTAL);
+        if (e.getDamager().getType() == EntityType.ENDER_CRYSTAL) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
     public void onMinecartTntExplode(EntityExplodeEvent e) {
-        e.setCancelled(e.getEntityType() == EntityType.MINECART_TNT);
+        if (e.getEntityType() == EntityType.MINECART_TNT) {
+            e.setCancelled(true);
+        }
     }
 
     /**
@@ -33,17 +39,23 @@ public class ExplosionListener implements Listener {
      */
     @EventHandler
     public void onPlayerIsDamagedByMinecartTnt(EntityDamageByEntityEvent e) {
-        e.setCancelled(e.getDamager() instanceof ExplosiveMinecart);
+        if (e.getDamager() instanceof ExplosiveMinecart) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
     public void onAnchorExplode(BlockExplodeEvent e) {
-        e.setCancelled(e.getYield() == 0.2F);
+        if (e.getYield() == 0.2F) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
     public void onPlayerIsDamagedByAnchor(EntityDamageEvent e) {
-        e.setCancelled(e.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION);
+        if (e.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) {
+            e.setCancelled(true);
+        }
     }
 
 }

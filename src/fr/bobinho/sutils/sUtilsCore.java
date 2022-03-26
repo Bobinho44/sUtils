@@ -3,6 +3,7 @@ package fr.bobinho.sutils;
 import co.aikar.commands.PaperCommandManager;
 import fr.bobinho.sutils.commands.EchestCommand;
 import fr.bobinho.sutils.commands.RulesCommand;
+import fr.bobinho.sutils.commands.SuicideCommand;
 import fr.bobinho.sutils.commands.home.DelhomeCommand;
 import fr.bobinho.sutils.commands.home.HomeCommand;
 import fr.bobinho.sutils.commands.home.SethomeCommand;
@@ -11,17 +12,17 @@ import fr.bobinho.sutils.commands.safezone.DelsafezoneCommand;
 import fr.bobinho.sutils.commands.spawn.SetspawnCommand;
 import fr.bobinho.sutils.commands.spawn.SpawnCommand;
 import fr.bobinho.sutils.commands.teleportation.TpaCommand;
+import fr.bobinho.sutils.commands.teleportation.TpahereCommand;
 import fr.bobinho.sutils.commands.teleportation.TpyesCommand;
 import fr.bobinho.sutils.listeners.*;
+import fr.bobinho.sutils.utils.combat.sUtilsCombatTagManager;
 import fr.bobinho.sutils.utils.safezone.sUtilsSafezoneManager;
-import fr.bobinho.sutils.utils.scheduler.sUtilsScheduler;
 import fr.bobinho.sutils.utils.settings.sUtilsSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.TimeUnit;
 
 public class sUtilsCore extends JavaPlugin {
 
@@ -76,6 +77,7 @@ public class sUtilsCore extends JavaPlugin {
     /**
      * Enable and initialize the plugin
      */
+    @Override
     public void onEnable() {
         instance = this;
 
@@ -99,6 +101,8 @@ public class sUtilsCore extends JavaPlugin {
      */
     public void onDisable() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[sUtils] Unloading the plugin...");
+
+        sUtilsCombatTagManager.clearCombatTags();
 
         //Saves safezones
         sUtilsSafezoneManager.savesUtilsSafezone();
@@ -140,6 +144,7 @@ public class sUtilsCore extends JavaPlugin {
 
         //Registers teleportations command
         commandManager.registerCommand(new TpaCommand());
+        commandManager.registerCommand(new TpahereCommand());
         commandManager.registerCommand(new TpyesCommand());
 
         //Registers rules command
@@ -147,6 +152,9 @@ public class sUtilsCore extends JavaPlugin {
 
         //Registers echest command
         commandManager.registerCommand(new EchestCommand());
+
+        //Registers suicide command
+        commandManager.registerCommand(new SuicideCommand());
 
         //Registers safezones command
         commandManager.registerCommand(new CreatesafezoneCommand());

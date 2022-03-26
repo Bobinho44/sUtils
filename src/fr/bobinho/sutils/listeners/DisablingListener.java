@@ -1,7 +1,6 @@
 package fr.bobinho.sutils.listeners;
 
 import fr.bobinho.sutils.sUtilsCore;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Evoker;
@@ -13,10 +12,11 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class DisablingListener implements Listener {
@@ -69,6 +69,14 @@ public class DisablingListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerUseMeCommand(PlayerCommandPreprocessEvent e) {
+        if (e.getMessage().split(" ")[0].equalsIgnoreCase("/me") || e.getMessage().split(" ")[0].equalsIgnoreCase("/minecraft:me")) {
+            e.setCancelled(true);
+            e.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to use this command!");
+        }
+    }
+
+    @EventHandler
     public void onPlayerAddShulkerBoxInEnderChest(InventoryClickEvent e) {
         if (e.getClickedInventory() == null || e.getInventory().getType() != InventoryType.ENDER_CHEST) {
             return;
@@ -86,7 +94,7 @@ public class DisablingListener implements Listener {
             e.setCancelled(true);
         }
 
-        if (e.getClickedInventory().getType() == InventoryType.ENDER_CHEST && e.getAction() == InventoryAction.HOTBAR_SWAP && !isItShulkerBox(e.getCursor())) {
+        if (e.getClickedInventory().getType() == InventoryType.ENDER_CHEST && e.getAction().name().contains("HOTBAR") && !isItShulkerBox(e.getCursor()) && inventoryContainShulkerBox(e.getWhoClicked().getInventory())) {
             e.setCancelled(true);
         }
 
@@ -97,6 +105,15 @@ public class DisablingListener implements Listener {
 
     private boolean isItShulkerBox(ItemStack item) {
         return item != null && item.getType().name().contains("SHULKER_BOX");
+    }
+
+    private boolean inventoryContainShulkerBox(Inventory inventory) {
+        for (ItemStack item : inventory.getContents()) {
+            if (isItShulkerBox(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

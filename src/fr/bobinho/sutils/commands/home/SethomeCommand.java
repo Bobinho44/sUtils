@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import fr.bobinho.sutils.utils.home.sUtilsHomeManager;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -21,6 +22,12 @@ public class SethomeCommand extends BaseCommand {
     public void onSethomeCommand(CommandSender commandSender, @Single String homeName) {
         if (commandSender instanceof Player) {
             Player sender = (Player) commandSender;
+
+            //Checks if the player is in the end
+            if (sender.getWorld().getEnvironment() == World.Environment.THE_END) {
+                sender.sendMessage(ChatColor.WHITE + "You cannot sethome in the " + ChatColor.DARK_PURPLE + "End" + ChatColor.WHITE + ".");
+                return;
+            }
 
             //Checks if the home exist
             if (sUtilsHomeManager.isItsUtilsHome(sender, homeName)) {

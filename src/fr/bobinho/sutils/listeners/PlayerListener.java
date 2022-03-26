@@ -4,6 +4,7 @@ import fr.bobinho.sutils.sUtilsCore;
 import fr.bobinho.sutils.utils.home.sUtilsHomeManager;
 import fr.bobinho.sutils.utils.location.sUtilsLocationUtil;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -57,7 +58,8 @@ public class PlayerListener implements Listener {
      */
     @EventHandler
     public void onWorldChange(PlayerTeleportEvent e) {
-        if (e.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL || e.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) {
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL) {
+
             e.setCancelled(true);
             
             //Sets spawn point

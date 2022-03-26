@@ -1,14 +1,12 @@
 package fr.bobinho.sutils.utils.safezone;
 
-import fr.bobinho.sutils.utils.scheduler.sUtilsScheduler;
 import org.apache.commons.lang.Validate;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class sUtilsSafezone {
 
@@ -85,11 +83,13 @@ public class sUtilsSafezone {
         Validate.notNull(player, "player is null");
 
         //Shows safezone segments
-        showSafezoneSegment(player, getOppositeCorner().getX() - getCorner().getX(), getCorner().getX(), getCorner().getZ(), true);
+        /*showSafezoneSegment(player, getOppositeCorner().getX() - getCorner().getX(), getCorner().getX(), getCorner().getZ(), true);
         showSafezoneSegment(player, getOppositeCorner().getZ() - getCorner().getZ(), getOppositeCorner().getX(), getCorner().getZ(), false);
         showSafezoneSegment(player, getCorner().getX() - getOppositeCorner().getX(), getOppositeCorner().getX(), getOppositeCorner().getZ(), true);
         showSafezoneSegment(player, getCorner().getZ() - getOppositeCorner().getZ(), getCorner().getX(), getOppositeCorner().getZ(), false);
+    */
     }
+
 
     /**
      * Shows a safezone segment
@@ -104,14 +104,21 @@ public class sUtilsSafezone {
         Validate.notNull(player, "player is null");
 
         //Loops safezone height
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 5; i++) {
             int increment = (int) ((length) / Math.abs(length));
 
             //Loops safezone side
             for (int j = 0; (length > 0 && j < (int) length) || (length < 0 && j > (int) length); j += increment) {
                 Location location = new Location(getWorld(), x + (isChangeX ? j : 0), i, z + (isChangeX ? 0 : j));
-                if (!location.getBlock().isPassable()) {
-                    player.sendBlockChange(location, Material.BLUE_STAINED_GLASS_PANE.createBlockData());
+
+                if (location.getWorld().equals(player.getWorld()) && location.distance(player.getLocation()) < 10) {
+                    break;
+                }
+
+                location.setY(player.getLocation().getX() + i);
+
+                if (location.getBlock().isPassable()) {
+                    player.sendBlockChange(location, Material.LIGHT_BLUE_STAINED_GLASS.createBlockData());
                 }
             }
         }
@@ -126,10 +133,11 @@ public class sUtilsSafezone {
         Validate.notNull(player, "player is null");
 
         //Hides safezone segments
-        hideSafezoneSegment(player, getOppositeCorner().getX() - getCorner().getX(), getCorner().getX(), getCorner().getZ(), true);
+        /*hideSafezoneSegment(player, getOppositeCorner().getX() - getCorner().getX(), getCorner().getX(), getCorner().getZ(), true);
         hideSafezoneSegment(player, getOppositeCorner().getZ() - getCorner().getZ(), getOppositeCorner().getX(), getCorner().getZ(), false);
         hideSafezoneSegment(player, getCorner().getX() - getOppositeCorner().getX(), getOppositeCorner().getX(), getOppositeCorner().getZ(), true);
         hideSafezoneSegment(player, getCorner().getZ() - getOppositeCorner().getZ(), getCorner().getX(), getOppositeCorner().getZ(), false);
+         */
     }
 
     /**

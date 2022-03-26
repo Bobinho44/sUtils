@@ -9,22 +9,24 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandAlias("rules")
-public class RulesCommand extends BaseCommand {
+@CommandAlias("suicide")
+public class SuicideCommand extends BaseCommand {
 
     /**
-     * Command rules
+     * Command suicide
      *
      * @param commandSender the sender
      */
     @Default
-    @Syntax("/rules")
-    @CommandPermission("sutils.rules")
-    public void onRulesCommand(CommandSender commandSender) {
+    @Syntax("/suicide")
+    @CommandPermission("sutils.suicide")
+    public void onSuicideCommand(CommandSender commandSender) {
         if (commandSender instanceof Player) {
             Player sender = (Player) commandSender;
 
-            sender.sendMessage(ChatColor.GOLD + "Be sure to read over our rules at: " + ChatColor.YELLOW + "rules.luxepvp.net");
+            sender.setHealth(0);
+
+            sender.sendMessage(ChatColor.RED + "You've killed yourself!");
         }
     }
 

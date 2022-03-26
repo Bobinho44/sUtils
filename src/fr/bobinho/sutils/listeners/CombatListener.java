@@ -1,13 +1,13 @@
 package fr.bobinho.sutils.listeners;
 
-import fr.bobinho.sutils.sUtilsCore;
+import fr.bobinho.steams.utils.team.TeamManager;
 import fr.bobinho.sutils.utils.combat.sUtilsCombatTagManager;
-import fr.bobinho.sutils.utils.location.sUtilsLocationUtil;
+import fr.bobinho.sutils.utils.safezone.sUtilsSafezoneManager;
 import fr.bobinho.sutils.utils.scheduler.sUtilsScheduler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -17,10 +17,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.TimeUnit;
@@ -34,7 +32,7 @@ public class CombatListener implements Listener {
      */
     @EventHandler
     public void onDisconnect(PlayerQuitEvent e) {
-        if (!sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer())) {
+        if (!sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer()) || Bukkit.getServer().isStopping()) {
             return;
         }
 
@@ -46,7 +44,7 @@ public class CombatListener implements Listener {
     public void onDeathBeforeDisconnect(PlayerDeathEvent e) {
 
         //Checks if the player leave the game because someone attacks him
-        if (e.getPlayer().getLastDamageCause() != null && e.getPlayer().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.CUSTOM || e.getPlayer().getLastDamageCause().getDamage() == 999D) {
+        if ((e.getPlayer().getLastDamageCause() != null && e.getPlayer().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.CUSTOM) || e.getPlayer().getLastDamageCause().getDamage() == 999D) {
 
             String lastDamagerName = sUtilsCombatTagManager.getsUtilsPlayerCombatTag(e.getPlayer()).get().getLastDamagerName();
 
@@ -73,9 +71,44 @@ public class CombatListener implements Listener {
             return;
         }
 
+        if (sUtilsSafezoneManager.isItInsUtilsSafezone(e.getEntity().getLocation()) || sUtilsSafezoneManager.isItInsUtilsSafezone(e.getDamager().getLocation())) {
+            e.setCancelled(true);
+            return;
+        }
+
+        //Checks if attacker and victim are teammate
+        if (TeamManager.areTeammate(e.getEntity().getUniqueId(), e.getDamager().getUniqueId()) && !TeamManager.getTeam(e.getEntity().getUniqueId()).get().isFriendlyFire()) {
+            return;
+        }
+
         //Adds combat tag to the players
-        sUtilsCombatTagManager.createsUtilsPlayerCombatTag((Player) e.getEntity(), (Player) e.getDamager());
-        sUtilsCombatTagManager.createsUtilsPlayerCombatTag((Player) e.getDamager(), (Player) e.getEntity());
+        if (!e.isCancelled()) {
+            sUtilsCombatTagManager.createsUtilsPlayerCombatTag((Player) e.getEntity(), (Player) e.getDamager());
+            sUtilsCombatTagManager.createsUtilsPlayerCombatTag((Player) e.getDamager(), (Player) e.getEntity());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerAttackPlayerWithProjectil(ProjectileHitEvent e) {
+        if (!(e.getHitEntity() instanceof Player) || !(e.getEntity().getShooter() instanceof Player)) {
+            return;
+        }
+
+        if (sUtilsSafezoneManager.isItInsUtilsSafezone(e.getHitEntity().getLocation()) || sUtilsSafezoneManager.isItInsUtilsSafezone(((Player) e.getEntity().getShooter()).getLocation())) {
+            e.setCancelled(true);
+            return;
+        }
+
+        //Checks if attacker and victim are teammate
+        if (TeamManager.areTeammate(e.getHitEntity().getUniqueId(), ((Player) e.getEntity().getShooter()).getUniqueId()) && !TeamManager.getTeam(e.getHitEntity().getUniqueId()).get().isFriendlyFire()) {
+            return;
+        }
+
+        //Adds combat tag to the players
+        if (!e.isCancelled()) {
+            sUtilsCombatTagManager.createsUtilsPlayerCombatTag((Player) e.getHitEntity(), ((Player) e.getEntity().getShooter()));
+            sUtilsCombatTagManager.createsUtilsPlayerCombatTag(((Player) e.getEntity().getShooter()), (Player) e.getHitEntity());
+        }
     }
 
     /**
@@ -85,7 +118,23 @@ public class CombatListener implements Listener {
      */
     @EventHandler
     public void onPlayerUseRocketWithElytra(PlayerInteractEvent e) {
-        if (!e.getPlayer().isGliding() || !sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer()) || e.getItem() == null || e.getItem().getType() != Material.FIREWORK_ROCKET || e.getAction() != Action.RIGHT_CLICK_AIR || e.getAction() != Action.RIGHT_CLICK_BLOCK) {
+        if (!e.getPlayer().isGliding() || !sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer()) || e.getItem() == null || e.getItem().getType() != Material.FIREWORK_ROCKET || (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)) {
+            return;
+        }
+
+        //Cancel the use of the rocket
+        e.setCancelled(true);
+        e.getPlayer().sendMessage(ChatColor.RED + "You can’t use this in combat!");
+    }
+
+    /**
+     * Listen when a player use a rocket with elytra during combat
+     *
+     * @param e the player interact event
+     */
+    @EventHandler
+    public void onPlayerUseCobwebInCombat(PlayerInteractEvent e) {
+        if (!sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer()) || e.getItem() == null || e.getItem().getType() != Material.COBWEB || (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
 
@@ -110,7 +159,7 @@ public class CombatListener implements Listener {
 
             //Adds cooldown
             sUtilsScheduler.syncScheduler().after(50, TimeUnit.MILLISECONDS).run(() ->
-                    e.getPlayer().setCooldown(Material.ENDER_PEARL, 600));
+                    e.getPlayer().setCooldown(Material.ENDER_PEARL, 300));
         }
     }
 
@@ -146,12 +195,20 @@ public class CombatListener implements Listener {
      */
     @EventHandler
     public void onUseEndPortal(PlayerTeleportEvent e) {
-        if (e.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL && e.getTo().getWorld().getEnvironment() == World.Environment.NORMAL) {
+        if (e.getFrom().getWorld().getEnvironment() == World.Environment.THE_END && e.getTo().getWorld().getEnvironment() != World.Environment.THE_END) {
 
-            //Removes tje combat tag
-            sUtilsCombatTagManager.deletesUtilsPlayerCombatTag(e.getPlayer());
+            //Removes the combat tag
+            if (sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer())) {
+                sUtilsCombatTagManager.deletesUtilsPlayerCombatTag(e.getPlayer());
+            }
 
         }
     }
 
+    @EventHandler
+    public void onWalk(PlayerMoveEvent e) {
+        if (e.hasChangedBlock() && sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer())) {
+            sUtilsSafezoneManager.showsUtilsSafezones(e.getPlayer());
+        }
+    }
 }

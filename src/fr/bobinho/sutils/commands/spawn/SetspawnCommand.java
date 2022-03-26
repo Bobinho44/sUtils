@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.Syntax;
 import fr.bobinho.sutils.sUtilsCore;
 import fr.bobinho.sutils.utils.location.sUtilsLocationUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,6 +26,11 @@ public class SetspawnCommand extends BaseCommand {
     public void onSetSpawnCommand(CommandSender commandSender) {
         if (commandSender instanceof Player) {
             Player sender = (Player) commandSender;
+
+            if (sender.getWorld().getEnvironment() == World.Environment.NETHER) {
+                sender.sendMessage(ChatColor.RED + "You can't set the spawn here!");
+                return;
+            }
 
             //Sets the spawn
             sUtilsCore.getMainSettings().getConfiguration().set("spawn." + sender.getWorld().getName(), sUtilsLocationUtil.getAsString(sender.getLocation()));
