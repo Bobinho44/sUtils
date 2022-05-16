@@ -121,5 +121,12 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/sTeams.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>sEvents</groupId>
+            <artifactId>sTeams</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/sEvents.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

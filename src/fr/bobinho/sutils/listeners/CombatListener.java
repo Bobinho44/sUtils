@@ -21,6 +21,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class CombatListener implements Listener {
@@ -42,6 +43,11 @@ public class CombatListener implements Listener {
 
     @EventHandler
     public void onDeathBeforeDisconnect(PlayerDeathEvent e) {
+
+        if (sUtilsCombatTagManager.isItsUtilsPlayerCombatTag(e.getPlayer())) {
+            Optional.ofNullable(Bukkit.getPlayer(sUtilsCombatTagManager.getsUtilsPlayerCombatTag(e.getPlayer()).get().getLastDamagerName()))
+                    .ifPresent(sUtilsCombatTagManager::deletesUtilsPlayerCombatTag);
+        }
 
         //Checks if the player leave the game because someone attacks him
         if ((e.getPlayer().getLastDamageCause() != null && e.getPlayer().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.CUSTOM) || e.getPlayer().getLastDamageCause().getDamage() == 999D) {
@@ -76,11 +82,6 @@ public class CombatListener implements Listener {
             return;
         }
 
-        //Checks if attacker and victim are teammate
-        if (TeamManager.areTeammate(e.getEntity().getUniqueId(), e.getDamager().getUniqueId()) && !TeamManager.getTeam(e.getEntity().getUniqueId()).get().isFriendlyFire()) {
-            return;
-        }
-
         //Adds combat tag to the players
         if (!e.isCancelled()) {
             sUtilsCombatTagManager.createsUtilsPlayerCombatTag((Player) e.getEntity(), (Player) e.getDamager());
@@ -96,11 +97,6 @@ public class CombatListener implements Listener {
 
         if (sUtilsSafezoneManager.isItInsUtilsSafezone(e.getHitEntity().getLocation()) || sUtilsSafezoneManager.isItInsUtilsSafezone(((Player) e.getEntity().getShooter()).getLocation())) {
             e.setCancelled(true);
-            return;
-        }
-
-        //Checks if attacker and victim are teammate
-        if (TeamManager.areTeammate(e.getHitEntity().getUniqueId(), ((Player) e.getEntity().getShooter()).getUniqueId()) && !TeamManager.getTeam(e.getHitEntity().getUniqueId()).get().isFriendlyFire()) {
             return;
         }
 

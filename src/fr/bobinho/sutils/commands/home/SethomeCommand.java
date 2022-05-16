@@ -2,6 +2,7 @@ package fr.bobinho.sutils.commands.home;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import fr.bobinho.sevents.utils.event.EventManager;
 import fr.bobinho.sutils.utils.home.sUtilsHomeManager;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -26,6 +27,11 @@ public class SethomeCommand extends BaseCommand {
             //Checks if the player is in the end
             if (sender.getWorld().getEnvironment() == World.Environment.THE_END) {
                 sender.sendMessage(ChatColor.WHITE + "You cannot sethome in the " + ChatColor.DARK_PURPLE + "End" + ChatColor.WHITE + ".");
+                return;
+            }
+
+            if (EventManager.isInKOTHZone(sender)) {
+                sender.sendMessage(ChatColor.RED + "You cannot sethome in a KOTH area!");
                 return;
             }
 

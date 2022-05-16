@@ -2,6 +2,7 @@ package fr.bobinho.sutils.utils.teleportation;
 
 import fr.bobinho.steams.utils.team.Team;
 import fr.bobinho.steams.utils.team.TeamManager;
+import fr.bobinho.sutils.utils.safezone.sUtilsSafezoneManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -28,7 +29,8 @@ public class sUtilsTeleportationRules {
                             onlinePlayer.getLocation().getWorld().equals(player.getWorld()) &&
                             onlinePlayer.getLocation().distance(player.getLocation()) < 100 &&
                             onlinePlayer.getGameMode() == GameMode.SURVIVAL &&
-                            player.getGameMode() == GameMode.SURVIVAL;
+                            player.getGameMode() == GameMode.SURVIVAL &&
+                            !sUtilsSafezoneManager.isItInsUtilsSafezone(player.getLocation());
                 }) ? 10 : 0;
     }
 
